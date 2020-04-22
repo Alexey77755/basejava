@@ -8,21 +8,22 @@ public class ArrayStorage {
     int indexArray;
 
     void clear() {
-        if(indexArray == 0) {
-            storage[indexArray] = null;
-        } else {
-            Arrays.fill(storage, 0, indexArray - 1, 0);
-        }
+        Arrays.fill(storage, 0, indexArray - 1, null);
+        indexArray = 0;
     }
 
     void save(Resume r) {
-        storage[indexArray] = r;
-        indexArray++;
+        if (r == null) {
+            System.out.println("Нет резюме для сохранения");
+        } else {
+            storage[indexArray] = r;
+            indexArray++;
+        }
     }
 
     Resume get(String uuid) {
-        for(int i = 0; i < indexArray-1; i++) {
-            if(storage[i].uuid == uuid) {
+        for (int i = 0; i < indexArray; i++) {
+            if (storage[i].uuid == uuid) {
                 return storage[i];
             }
         }
@@ -31,15 +32,16 @@ public class ArrayStorage {
     }
 
     void delete(String uuid) {
-        for(int i = 0; i < indexArray-1; i++) {
-            if(storage[i].uuid ==uuid) {
+        for (int i = 0; i < indexArray; i++) {
+            if (storage[i].uuid == uuid) {
                 storage[i] = null;
-                Resume[] tempArr = new Resume[storage.length-1];
-                System.arraycopy(storage,0,tempArr,0,i-1);
-                System.arraycopy(storage,i+1,tempArr,i-1,indexArray-1);
-                storage =tempArr;
+                Resume[] tempArr = new Resume[storage.length];
+                System.arraycopy(storage, 0, tempArr, 0, i);
+                System.arraycopy(storage, i + 1, tempArr, i, (indexArray - 1) - i);
+                storage = tempArr;
+                indexArray--;
+                break;
             }
-
         }
     }
 
@@ -47,16 +49,13 @@ public class ArrayStorage {
      * @return array, contains only Resumes in storage (without null)
      */
     Resume[] getAll() {
-        if(indexArray == 0){
-            return null;
+        if (indexArray == 0) {
+            return new Resume[0];
         }
-        return Arrays.copyOf(storage, indexArray-1);
+        return Arrays.copyOf(storage, indexArray);
     }
 
     int size() {
-        if(indexArray == 0) {
-            return 0;
-        }
-        return indexArray-1;
+        return indexArray;
     }
 }
